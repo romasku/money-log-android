@@ -41,6 +41,7 @@
         android:id="@+id/spending_amount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spending_amount_label" />
