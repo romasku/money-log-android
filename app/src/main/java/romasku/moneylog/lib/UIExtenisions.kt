@@ -4,7 +4,7 @@ import android.widget.EditText
 import androidx.core.widget.doOnTextChanged
 import java.math.BigDecimal
 
-fun <S, E, V> Store<S, E>.link(
+fun <S, E, C, V> Store<S, E, C>.link(
     stringToValue: (String) -> V,
     valueToString: (V) -> String,
     valueToEvent: (V) -> E,
@@ -26,7 +26,7 @@ fun <S, E, V> Store<S, E>.link(
     }
 }
 
-fun <S, E> Store<S, E>.linkString(
+fun <S, E, M> Store<S, E, M>.linkString(
     valueToEvent: (String) -> E,
     stateToValue: (S) -> String,
     editText: EditText
@@ -34,7 +34,7 @@ fun <S, E> Store<S, E>.linkString(
     link({ it }, { it }, valueToEvent, stateToValue, editText)
 }
 
-fun <S, E> Store<S, E>.linkDecimal(
+fun <S, E, M> Store<S, E, M>.linkDecimal(
     valueToEvent: (BigDecimal?) -> E,
     stateToValue: (S) -> BigDecimal?,
     editText: EditText
