@@ -1,9 +1,8 @@
 package romasku.moneylog.services.storage
 
-import android.util.Log
+import java.math.BigDecimal
 import romasku.moneylog.lib.makeEffector
 import romasku.moneylog.lib.plus
-import java.math.BigDecimal
 import romasku.moneylog.state.ListSpendings
 import romasku.moneylog.state.StoreSpending
 import romasku.moneylog.state.entities.Spending
@@ -26,9 +25,6 @@ class Storage {
     fun listSpendings(): List<Spending> = spendings
 }
 
-
 fun makeStorageEffector(storage: Storage) =
     makeEffector { effect: StoreSpending -> storage.createSpending(effect.name, effect.amount) } +
-    makeEffector { _: ListSpendings -> storage.listSpendings()  }
-
-
+        makeEffector { _: ListSpendings -> storage.listSpendings() }

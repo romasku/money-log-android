@@ -1,42 +1,23 @@
 package romasku.moneylog.state
 
-import romasku.moneylog.lib.*
+import romasku.moneylog.lib.Effector
+import romasku.moneylog.lib.Navigator
 
-typealias NavigatorStore = Store<NavigatorState, Route, Unit>
-
-sealed class Route
-
-object NewSpending : Route()
-object SpendingList : Route()
-
-sealed class NavigatorState
-
-data class SpendingEditorScreen(val store: SpendingEditorStore) : NavigatorState()
-
-data class NavigateTo(val route: Route): Effect<Unit>()
-
-fun makeNavigator(effector: Effector): NavigatorStore {
-    var store: NavigatorStore? = null
-
-    val route = makeEffector { it: NavigateTo ->
-        store?.dispatch(it.route) ?: throw Exception("Tried to navigate before navigator was initialized")
-    }
-
-    val effectorWithRoute = effector + route
-
-    fun init() = Pair(SpendingEditorScreen(SpendingEditor.toStore(effectorWithRoute)), null)
-
-    fun reduce(state: NavigatorState, event: Route): Pair<NavigatorState, Unit?> {
-        return when (event) {
-            is NewSpending -> Pair(
-                SpendingEditorScreen(SpendingEditor.toStore(effectorWithRoute)),
-                null
-            )
-            is SpendingList -> Pair(state, null)
-        }
-    }
-
-    store = Store(::init, ::reduce, defDoCommand {}, effectorWithRoute)
-
-    return store
+sealed class Screen {
+    class SpendingEditor(val store: SpendingEditorStore) : Screen()
+    class SpendingsList(val store: SpendingsListStore) : Screen()
 }
+
+sealed class Route {
+    object NewSpending : Route()
+    object SpendingList : Route()
+}
+
+internal val routing = { route: Route, effector: Effector ->
+    when (route) {
+        is Route.NewSpending -> Screen.SpendingEditor(SpendingEditor.toStore(effector))
+        is Route.SpendingList -> Screen.SpendingsList(SpendingsList.toStore(effector))
+    }
+}
+
+fun makeNavigator(effector: Effector) = Navigator<Screen, Route>(effector, routing, Route.NewSpending)

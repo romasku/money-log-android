@@ -1,14 +1,11 @@
 package romasku.moneylog.state
 
-import android.util.Log
-import romasku.moneylog.lib.*
 import java.math.BigDecimal
-
+import romasku.moneylog.lib.*
 
 typealias SpendingEditorStore = Store<SpendingEditor.State, SpendingEditor.Event, SpendingEditor.Command>
 
-
-object SpendingEditor: StoreDefs<SpendingEditor.State, SpendingEditor.Event, SpendingEditor.Command> {
+object SpendingEditor : StoreDefs<SpendingEditor.State, SpendingEditor.Event, SpendingEditor.Command> {
 
     data class State(
         val name: String = "",
@@ -34,7 +31,8 @@ object SpendingEditor: StoreDefs<SpendingEditor.State, SpendingEditor.Event, Spe
     override val init = defInit { Pair(State(), null) }
 
     override val update = defUpdate {
-        state: State, event: Event -> when (event) {
+        state: State, event: Event ->
+        when (event) {
             is Event.NameEntered -> Pair(
                 state.copy(
                     name = event.name,
@@ -59,20 +57,24 @@ object SpendingEditor: StoreDefs<SpendingEditor.State, SpendingEditor.Event, Spe
                 if (nameError == null && amountError == null) {
                     Pair(state, Command.SaveSpending(state.name, state.amount!!))
                 } else {
-                    Pair(state.copy(
-                        nameError = nameError,
-                        amountError = amountError
-                    ), null)
+                    Pair(
+                        state.copy(
+                            nameError = nameError,
+                            amountError = amountError
+                        ),
+                        null
+                    )
                 }
             }
         }
     }
 
     override val doCommand = defDoCommand {
-        command: Command -> when(command) {
+        command: Command ->
+        when (command) {
             is Command.SaveSpending -> {
                 effect(StoreSpending(command.name, command.amount))
-                effect(NavigateTo(SpendingList))
+                effect(NavigateTo(Route.SpendingList))
             }
         }
     }

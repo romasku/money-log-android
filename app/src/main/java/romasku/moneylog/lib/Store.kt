@@ -41,15 +41,16 @@ interface CommandCtx {
 
 typealias StoreInit<S, C> = () -> Pair<S, C?>
 typealias StoreUpdate<S, C, M> = (S, M) -> Pair<S, C?>
-typealias StoreDoCommand<C> =  (C) -> Generator<*, Effect<*>>
+typealias StoreDoCommand<C> = (C) -> Generator<*, Effect<*>>
 
-fun <S, C>defInit(init: () -> Pair<S, C?>): StoreInit<S, C> = init
-fun <S, C, M>defUpdate( update: (S, M) -> Pair<S, C?>): StoreUpdate<S, C, M> = update
-fun <C>defDoCommand(doCommand: suspend CommandCtx.(C) -> Unit): StoreDoCommand<C> = {
-    cmd: C -> {
-        val commandCtx: CommandCtx = object: CommandCtx {
+fun <S, C> defInit(init: () -> Pair<S, C?>): StoreInit<S, C> = init
+fun <S, C, M> defUpdate(update: (S, M) -> Pair<S, C?>): StoreUpdate<S, C, M> = update
+fun <C> defDoCommand(doCommand: suspend CommandCtx.(C) -> Unit): StoreDoCommand<C> = {
+    cmd: C ->
+    {
+        val commandCtx: CommandCtx = object : CommandCtx {
             @Suppress("UNCHECKED_CAST")
-            override suspend fun <T> effect(effect: Effect<T>): T  = yield(effect) as T
+            override suspend fun <T> effect(effect: Effect<T>): T = yield(effect) as T
         }
         doCommand.invoke(commandCtx, cmd)
     }
@@ -64,6 +65,9 @@ class Store<S, M, C> (
     interface Subscription {
         fun unsubscribe()
     }
+
+    val current: S
+        get() = state.get()
 
     private val applyEffect = (effector + noop + makeDispatch(this)) { throw UnknownEffect(it) }
     private val state: AtomicReference<S>
@@ -82,6 +86,7 @@ class Store<S, M, C> (
             val (newState, newCommand) = update(oldState, message)
             command = newCommand
         } while (!state.compareAndSet(oldState, newState))
+        subscriptions.forEach { it(state.get()) }
         runCommand(command)
     }
 
@@ -100,7 +105,7 @@ class Store<S, M, C> (
             return
         }
         val generator = startGenerator<Any, Effect<*>>(doCommand(cmd))
-        while(true) {
+        while (true) {
             generator.lastResult?.also {
                 generator.proceed(applyEffect(it))
             } ?: break

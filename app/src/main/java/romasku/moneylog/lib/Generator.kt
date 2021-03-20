@@ -3,7 +3,6 @@ package romasku.moneylog.lib
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
-
 typealias Generator<P, R> = suspend GeneratorContext<P, R>.() -> Unit
 
 interface GeneratorContext<P, R> {
@@ -17,10 +16,9 @@ interface RunningGenerator<in P, out R> {
 
 class GeneratorFinished : Throwable()
 
-fun <P, R>startGenerator(block: Generator<P, R>): RunningGenerator<P, R> = GeneratorRunner(block)
+fun <P, R> startGenerator(block: Generator<P, R>): RunningGenerator<P, R> = GeneratorRunner(block)
 
-
-internal class GeneratorRunner<P, R>(block: Generator<P, R>): GeneratorContext<P, R>, RunningGenerator<P, R>, Continuation<Unit> {
+internal class GeneratorRunner<P, R>(block: Generator<P, R>) : GeneratorContext<P, R>, RunningGenerator<P, R>, Continuation<Unit> {
     override var lastResult: R? = null
         private set
     private var continuation: Continuation<P>? = null
@@ -53,8 +51,3 @@ internal class GeneratorRunner<P, R>(block: Generator<P, R>): GeneratorContext<P
             .onFailure { exception = it }
     }
 }
-
-
-
-
-

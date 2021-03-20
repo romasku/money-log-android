@@ -1,38 +1,43 @@
 package romasku.moneylog
 
 import android.os.Bundle
+import android.view.View
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
-import romasku.moneylog.lib.linkDecimal
-import romasku.moneylog.lib.linkString
+import romasku.moneylog.lib.ViewNavigator
 import romasku.moneylog.state.*
-import romasku.moneylog.state.SpendingEditor.Event.*
+import romasku.moneylog.ui.makeSpendingEditorView
+import romasku.moneylog.ui.makeSpendingsListView
 
 class MainActivity : AppCompatActivity() {
+    lateinit var viewNavigator: ViewNavigator<Screen, View>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val frame = FrameLayout(this)
+        setContentView(frame)
 
-        MoneyLogApplication.navigatorStore.subscribe { screen ->
-            when(screen) {
-                is SpendingEditorScreen -> screen.store.apply {
-                    linkString(
-                        valueToEvent = { NameEntered(it) },
-                        stateToValue = { it.name },
-                        editText = spending_name
-                    )
-
-                    linkDecimal(
-                        valueToEvent = { AmountEntered(it) },
-                        stateToValue = { it.amount },
-                        editText = spending_amount
-                    )
-
-                    save_spending.setOnClickListener { dispatch(SaveRequested) }
+        viewNavigator = ViewNavigator(
+            MoneyLogApplication.navigator,
+            makeView = {
+                when (it) {
+                    is Screen.SpendingEditor -> makeSpendingEditorView(it.store, layoutInflater, frame)
+                    is Screen.SpendingsList -> makeSpendingsListView(it.store, layoutInflater, frame)
                 }
+            },
+            attachView = {
+                frame.removeAllViews()
+                frame.addView(it)
             }
+        )
+    }
+
+    override fun onBackPressed() {
+        // TODO: pass navigation through ViewStore
+        if (MoneyLogApplication.navigator.current.size == 1) {
+            super.onBackPressed()
+        } else {
+            MoneyLogApplication.navigator.dispatchBack()
         }
-
-
     }
 }
