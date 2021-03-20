@@ -1,12 +1,9 @@
-package romasku.moneylog.ui
+package romasku.moneylog.screens.spendingsList
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.spending_editor.*
-import kotlinx.android.synthetic.main.spending_editor.view.*
 import romasku.moneylog.R
-import romasku.moneylog.state.SpendingsListStore
 
 fun makeSpendingsListView(
     store: SpendingsListStore,

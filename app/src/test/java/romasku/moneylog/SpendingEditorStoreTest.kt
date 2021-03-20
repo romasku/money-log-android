@@ -4,6 +4,7 @@ import java.math.BigDecimal
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import org.junit.Test
+import romasku.moneylog.entities.Spending
 import romasku.moneylog.lib.NavigateTo
 import romasku.moneylog.state.Route
 import romasku.moneylog.state.SpendingEditor.Command
@@ -12,7 +13,6 @@ import romasku.moneylog.state.SpendingEditor.doCommand
 import romasku.moneylog.state.SpendingEditor.init
 import romasku.moneylog.state.SpendingEditor.update
 import romasku.moneylog.state.StoreSpending
-import romasku.moneylog.state.entities.Spending
 
 class SpendingEditorStoreTest {
     @Test

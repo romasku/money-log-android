@@ -1,14 +1,14 @@
-package romasku.moneylog.services.storage
+package romasku.moneylog.services
 
 import java.math.BigDecimal
+import romasku.moneylog.ListSpendings
+import romasku.moneylog.StoreSpending
+import romasku.moneylog.entities.Spending
 import romasku.moneylog.lib.makeEffector
 import romasku.moneylog.lib.plus
-import romasku.moneylog.state.ListSpendings
-import romasku.moneylog.state.StoreSpending
-import romasku.moneylog.state.entities.Spending
 
 class Storage {
-    val spendings: MutableList<Spending> = mutableListOf()
+    private val spendings: MutableList<Spending> = mutableListOf()
     var id = 0
 
     private fun nextId(): String {

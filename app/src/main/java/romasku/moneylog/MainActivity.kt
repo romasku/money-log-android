@@ -5,9 +5,7 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import romasku.moneylog.lib.ViewNavigator
-import romasku.moneylog.state.*
-import romasku.moneylog.ui.makeSpendingEditorView
-import romasku.moneylog.ui.makeSpendingsListView
+import romasku.moneylog.screens.*
 
 class MainActivity : AppCompatActivity() {
     lateinit var viewNavigator: ViewNavigator<Screen, View>
@@ -19,12 +17,7 @@ class MainActivity : AppCompatActivity() {
 
         viewNavigator = ViewNavigator(
             MoneyLogApplication.navigator,
-            makeView = {
-                when (it) {
-                    is Screen.SpendingEditor -> makeSpendingEditorView(it.store, layoutInflater, frame)
-                    is Screen.SpendingsList -> makeSpendingsListView(it.store, layoutInflater, frame)
-                }
-            },
+            makeView = viewSelector(layoutInflater, frame),
             attachView = {
                 frame.removeAllViews()
                 frame.addView(it)

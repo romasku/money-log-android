@@ -1,7 +1,11 @@
-package romasku.moneylog.state
+package romasku.moneylog.screens
 
 import romasku.moneylog.lib.Effector
 import romasku.moneylog.lib.Navigator
+import romasku.moneylog.screens.spendingEditor.SpendingEditor
+import romasku.moneylog.screens.spendingEditor.SpendingEditorStore
+import romasku.moneylog.screens.spendingsList.SpendingsList
+import romasku.moneylog.screens.spendingsList.SpendingsListStore
 
 sealed class Screen {
     class SpendingEditor(val store: SpendingEditorStore) : Screen()

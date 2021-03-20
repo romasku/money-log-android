@@ -1,8 +1,8 @@
-package romasku.moneylog.state
+package romasku.moneylog
 
 import java.math.BigDecimal
+import romasku.moneylog.entities.Spending
 import romasku.moneylog.lib.Effect
-import romasku.moneylog.state.entities.Spending
 
 sealed class StorageEffect<T> : Effect<T>()
 

@@ -2,11 +2,11 @@ package romasku.moneylog
 
 import android.app.Application
 import romasku.moneylog.lib.Navigator
-import romasku.moneylog.services.storage.Storage
-import romasku.moneylog.services.storage.makeStorageEffector
-import romasku.moneylog.state.Route
-import romasku.moneylog.state.Screen
-import romasku.moneylog.state.makeNavigator
+import romasku.moneylog.screens.Route
+import romasku.moneylog.screens.Screen
+import romasku.moneylog.screens.makeNavigator
+import romasku.moneylog.services.Storage
+import romasku.moneylog.services.makeStorageEffector
 
 class MoneyLogApplication : Application() {
 

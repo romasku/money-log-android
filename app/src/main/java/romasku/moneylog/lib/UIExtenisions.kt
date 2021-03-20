@@ -4,8 +4,13 @@ import android.widget.EditText
 import androidx.core.widget.doOnTextChanged
 import java.math.BigDecimal
 
+sealed class LinkParseResult<V> {
+    data class OK<V>(val value: V) : LinkParseResult<V>()
+    class Fail<V> : LinkParseResult<V>()
+}
+
 fun <S, E, C, V> Store<S, E, C>.link(
-    stringToValue: (String) -> V,
+    stringToValue: (String) -> LinkParseResult<V>,
     valueToString: (V) -> String,
     valueToEvent: (V) -> E,
     stateToValue: (S) -> V,
@@ -13,9 +18,15 @@ fun <S, E, C, V> Store<S, E, C>.link(
 ) {
     editText.doOnTextChanged { text, _, _, _ ->
         val string = text.toString()
-        val value = stringToValue(string)
-        val event = valueToEvent(value)
-        dispatch(event)
+        when (val parseResult = stringToValue(string)) {
+            is LinkParseResult.OK<V> -> {
+                val event = valueToEvent(parseResult.value)
+                dispatch(event)
+            }
+            is LinkParseResult.Fail -> {
+                editText.setText(valueToString(stateToValue(this.current)))
+            }
+        }
     }
     subscribe {
         val stateValue = stateToValue(it)
@@ -31,7 +42,7 @@ fun <S, E, M> Store<S, E, M>.linkString(
     stateToValue: (S) -> String,
     editText: EditText
 ) {
-    link({ it }, { it }, valueToEvent, stateToValue, editText)
+    link({ LinkParseResult.OK(it) }, { it }, valueToEvent, stateToValue, editText)
 }
 
 fun <S, E, M> Store<S, E, M>.linkDecimal(
@@ -40,7 +51,14 @@ fun <S, E, M> Store<S, E, M>.linkDecimal(
     editText: EditText
 ) {
     link(
-        { it.toBigDecimalOrNull() },
+        {
+            val decimal = it.toBigDecimalOrNull()
+            when {
+                it == "" -> LinkParseResult.OK(null)
+                decimal != null -> LinkParseResult.OK(decimal)
+                else -> LinkParseResult.Fail()
+            }
+        },
         {
             it?.toPlainString() ?: ""
         },

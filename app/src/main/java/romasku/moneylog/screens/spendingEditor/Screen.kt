@@ -1,4 +1,4 @@
-package romasku.moneylog.ui
+package romasku.moneylog.screens.spendingEditor
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,8 +7,6 @@ import kotlinx.android.synthetic.main.spending_editor.view.*
 import romasku.moneylog.R
 import romasku.moneylog.lib.linkDecimal
 import romasku.moneylog.lib.linkString
-import romasku.moneylog.state.SpendingEditor
-import romasku.moneylog.state.SpendingEditorStore
 
 fun makeSpendingEditorView(
     store: SpendingEditorStore,
@@ -21,13 +19,16 @@ fun makeSpendingEditorView(
             linkString(
                 valueToEvent = { SpendingEditor.Event.NameEntered(it) },
                 stateToValue = { it.name },
-                editText = spending_name
+                editText = spending_name_input
             )
+
+            store.subscribe { spending_name_layout.error = it.nameError }
+            store.subscribe { spending_amount_layout.error = it.amountError }
 
             linkDecimal(
                 valueToEvent = { SpendingEditor.Event.AmountEntered(it) },
                 stateToValue = { it.amount },
-                editText = spending_amount
+                editText = spending_amount_input
             )
         }
         save_spending.setOnClickListener { store.dispatch(SpendingEditor.Event.SaveRequested) }

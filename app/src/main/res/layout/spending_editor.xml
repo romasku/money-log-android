@@ -7,43 +7,39 @@
     android:layout_marginTop="10dp"
     android:layout_marginHorizontal="10dp">
 
-    <TextView
-        android:id="@+id/spending_name_label"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/spending_name_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Spending name:"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:errorEnabled="true">
 
-    <EditText
-        android:id="@+id/spending_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@+id/spending_name_label"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/spending_name_label"
-        app:layout_constraintTop_toBottomOf="@id/spending_name_label" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/spending_name_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Spending name:" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView
-        android:id="@+id/spending_amount_label"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/spending_amount_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Spending amount:"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spending_name" />
+        app:layout_constraintTop_toBottomOf="@id/spending_name_layout"
+        app:errorEnabled="true">
 
-    <EditText
-        android:id="@+id/spending_amount"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spending_amount_label" />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/spending_amount_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:hint="Spending amount:" />
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <Button
         android:id="@+id/save_spending"
@@ -54,6 +50,8 @@
         android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spending_amount" />
+        app:layout_constraintTop_toBottomOf="@+id/spending_amount_layout" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

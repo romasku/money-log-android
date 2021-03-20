@@ -1,4 +1,4 @@
-package romasku.moneylog.state
+package romasku.moneylog.screens.spendingsList
 
 import romasku.moneylog.lib.*
 

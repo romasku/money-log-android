@@ -15,8 +15,8 @@ class Navigator<BS, R>(
     initialRoute: R
 ) {
     private val effector = effector +
-            makeEffector { it: NavigateTo<R> -> store.dispatch(Event.GoTo(it.route)) } +
-            makeEffector { _: NavigateBack -> store.dispatch(Event.Back()) }
+        makeEffector { it: NavigateTo<R> -> store.dispatch(Event.GoTo(it.route)) } +
+        makeEffector { _: NavigateBack -> store.dispatch(Event.Back()) }
 
     private val store = Store<List<BS>, Event<R>, Unit>(
         init = defInit { Pair(listOf(setupNewStore(initialRoute)), null) },
