@@ -1,7 +1,6 @@
 package romasku.moneylog.lib
 
 import java.util.concurrent.atomic.AtomicReference
-import kotlin.coroutines.RestrictsSuspension
 
 // Effect handling
 
