@@ -1,13 +1,12 @@
 package romasku.moneylog.screens.spendingEditor
 
-import romasku.moneylog.StoreSpending
+import romasku.moneylog.entities.SpendingData
 import romasku.moneylog.lib.Effector
-import romasku.moneylog.lib.NavigateTo
+import romasku.moneylog.lib.SetResult
 import romasku.moneylog.lib.Store
 import romasku.moneylog.lib.defDoCommand
 import romasku.moneylog.lib.defInit
 import romasku.moneylog.lib.defUpdate
-import romasku.moneylog.screens.Route
 import java.math.BigDecimal
 
 typealias SpendingEditorStore = Store<State, Event, Command>
@@ -80,8 +79,7 @@ val update = defUpdate { state: State, event: Event ->
 val doCommand = defDoCommand { command: Command ->
     when (command) {
         is Command.SaveSpending -> {
-            effect(StoreSpending(command.name, command.amount))
-            effect(NavigateTo(Route.SpendingList))
+            effect(SetResult(SpendingData(command.name, command.amount)))
         }
     }
 }

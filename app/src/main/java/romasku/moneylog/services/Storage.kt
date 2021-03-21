@@ -3,9 +3,9 @@ package romasku.moneylog.services
 import romasku.moneylog.ListSpendings
 import romasku.moneylog.StoreSpending
 import romasku.moneylog.entities.Spending
+import romasku.moneylog.entities.SpendingData
 import romasku.moneylog.lib.makeEffector
 import romasku.moneylog.lib.plus
-import java.math.BigDecimal
 
 class Storage {
     private val spendings: MutableList<Spending> = mutableListOf()
@@ -16,8 +16,8 @@ class Storage {
         return id.toString()
     }
 
-    fun createSpending(name: String, amount: BigDecimal): Spending {
-        val spending = Spending(nextId(), name, amount)
+    fun createSpending(data: SpendingData): Spending {
+        val spending = Spending(nextId(), data)
         spendings.add(spending)
         return spending
     }
@@ -26,5 +26,5 @@ class Storage {
 }
 
 fun makeStorageEffector(storage: Storage) =
-    makeEffector { effect: StoreSpending -> storage.createSpending(effect.name, effect.amount) } +
+    makeEffector { effect: StoreSpending -> storage.createSpending(effect.data) } +
         makeEffector { _: ListSpendings -> storage.listSpendings() }

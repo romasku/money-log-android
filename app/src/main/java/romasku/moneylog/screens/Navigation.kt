@@ -25,4 +25,4 @@ internal val routing = { route: Route, effector: Effector ->
 }
 
 fun makeNavigator(effector: Effector) =
-    Navigator<Screen, Route>(effector, routing, Route.NewSpending)
+    Navigator<Screen, Route>(effector, routing, Route.SpendingList)

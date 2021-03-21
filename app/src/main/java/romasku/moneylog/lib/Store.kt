@@ -9,26 +9,43 @@ open class Effect<out T>
 
 data class Dispatch<M>(val message: M) : Effect<Unit>()
 
-typealias SimpleEffector = (Effect<*>) -> Any
+typealias SimpleEffector = (Effect<*>, (Any) -> Unit) -> Any
 
 typealias Effector = (SimpleEffector) -> (SimpleEffector)
 
 inline fun <T, reified E : Effect<T>> makeEffector(crossinline process: (E) -> T): Effector =
-    { next ->
-        { effect: Effect<*> ->
+    { next: SimpleEffector ->
+        { effect: Effect<*>, setResult ->
             if (effect is E) {
-                process(effect) as Any
+                setResult(process(effect) as Any)
             } else {
-                next(effect)
+                next(effect, setResult)
             }
         }
     }
+
+inline fun <T : Any, reified E : Effect<T>> makeAsyncEffector(crossinline process: (E, (T) -> Unit) -> Unit): Effector =
+    { next: SimpleEffector ->
+        { effect: Effect<*>, setResult ->
+            if (effect is E) {
+                process(effect, setResult)
+            } else {
+                next(effect, setResult)
+            }
+        }
+    }
+
+fun makeTapEffector(sideEffect: (Effect<*>) -> Unit): Effector = { next ->
+    { effect, callback ->
+        sideEffect(effect)
+        next(effect, callback)
+    }
+}
 
 operator fun Effector.plus(another: Effector): Effector = { this(another(it)) }
 
 class UnknownEffect(val effect: Effect<*>) : Throwable()
 
-@RestrictsSuspension
 interface CommandCtx {
     suspend fun <T> effect(effect: Effect<T>): T
 }
@@ -70,7 +87,7 @@ class Store<S, M, C>(
         effector + makeEffector { it: Dispatch<M> ->
             dispatch(it.message)
         }
-        ) { throw UnknownEffect(it) }
+        ) { effect, _ -> throw UnknownEffect(effect) }
     private val state: AtomicReference<S>
     private val subscriptions: MutableList<(S) -> Unit> = mutableListOf()
 
@@ -106,10 +123,18 @@ class Store<S, M, C>(
             return
         }
         val generator = startGenerator<Any, Effect<*>>(doCommand(cmd))
-        while (true) {
-            generator.lastResult?.also {
-                generator.proceed(applyEffect(it))
-            } ?: break
+        lateinit var proceed: ((Any) -> Unit)
+        val runNext = {
+            generator.lastResult?.also { effect ->
+                applyEffect(effect) {
+                    proceed(it)
+                }
+            }
         }
+        proceed = { it: Any ->
+            generator.proceed(it)
+            runNext()
+        }
+        runNext()
     }
 }

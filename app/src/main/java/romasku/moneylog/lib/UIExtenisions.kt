@@ -2,6 +2,8 @@ package romasku.moneylog.lib
 
 import android.widget.EditText
 import androidx.core.widget.doOnTextChanged
+import romasku.moneylog.lib.LinkParseResult.Fail
+import romasku.moneylog.lib.LinkParseResult.OK
 import java.math.BigDecimal
 
 sealed class LinkParseResult<V> {
@@ -30,8 +32,11 @@ fun <S, E, C, V> Store<S, E, C>.link(
     }
     subscribe {
         val stateValue = stateToValue(it)
-        val viewValue = stringToValue(editText.text.toString())
-        if (stateValue != viewValue) {
+        val shouldUpdate = when (val viewValue = stringToValue(editText.text.toString())) {
+            is Fail -> true
+            is OK -> viewValue.value != stateValue
+        }
+        if (shouldUpdate) {
             editText.setText(valueToString(stateValue))
         }
     }
