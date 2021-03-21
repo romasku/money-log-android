@@ -4,6 +4,7 @@ import junit.framework.TestCase.assertEquals
 import romasku.moneylog.lib.Effect
 import romasku.moneylog.lib.RunningGenerator
 import romasku.moneylog.lib.StoreDoCommand
+import kotlin.reflect.KClass
 
 class CommandTestRun(private val generator: RunningGenerator<Any, Effect<*>>) {
     fun <T> assertCommandStep(effect: Effect<T>, result: T) {
@@ -22,3 +23,15 @@ fun <C> StoreDoCommand<C>.testRun(cmd: C) = CommandTestRun(
         )
     )
 )
+
+@Suppress("UNCHECKED_CAST")
+fun <T : Throwable> expectError(type: KClass<T>, block: () -> Unit): T {
+    try {
+        block()
+    } catch (e: Throwable) {
+        if (type.isInstance(e)) {
+            return e as T
+        }
+    }
+    throw Throwable("Exception not thrown")
+}

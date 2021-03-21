@@ -1,11 +1,11 @@
 package romasku.moneylog.services
 
-import java.math.BigDecimal
 import romasku.moneylog.ListSpendings
 import romasku.moneylog.StoreSpending
 import romasku.moneylog.entities.Spending
 import romasku.moneylog.lib.makeEffector
 import romasku.moneylog.lib.plus
+import java.math.BigDecimal
 
 class Storage {
     private val spendings: MutableList<Spending> = mutableListOf()

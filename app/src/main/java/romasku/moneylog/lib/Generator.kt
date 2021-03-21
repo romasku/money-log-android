@@ -1,7 +1,12 @@
 package romasku.moneylog.lib
 
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.coroutines.createCoroutine
+import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
+import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
+import kotlin.coroutines.resume
 
 typealias Generator<P, R> = suspend GeneratorContext<P, R>.() -> Unit
 
@@ -18,7 +23,10 @@ class GeneratorFinished : Throwable()
 
 fun <P, R> startGenerator(block: Generator<P, R>): RunningGenerator<P, R> = GeneratorRunner(block)
 
-internal class GeneratorRunner<P, R>(block: Generator<P, R>) : GeneratorContext<P, R>, RunningGenerator<P, R>, Continuation<Unit> {
+internal class GeneratorRunner<P, R>(block: Generator<P, R>) :
+    GeneratorContext<P, R>,
+    RunningGenerator<P, R>,
+    Continuation<Unit> {
     override var lastResult: R? = null
         private set
     private var continuation: Continuation<P>? = null

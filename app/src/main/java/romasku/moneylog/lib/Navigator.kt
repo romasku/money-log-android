@@ -23,7 +23,7 @@ class Navigator<BS, R>(
         update = defUpdate { stack, event ->
             when (event) {
                 is Event.GoTo<R> -> Pair(stack + listOf(setupNewStore(event.route)), null)
-                is Event.Back -> Pair(stack.subList(0, Math.max(stack.size - 1, 1)), null)
+                is Event.Back<R> -> Pair(stack.subList(0, Math.max(stack.size - 1, 1)), null)
             }
         },
         doCommand = defDoCommand { }

@@ -1,23 +1,29 @@
 package romasku.moneylog.screens.spendingsList
 
-import romasku.moneylog.lib.*
+import romasku.moneylog.lib.Effector
+import romasku.moneylog.lib.Store
+import romasku.moneylog.lib.defDoCommand
+import romasku.moneylog.lib.defInit
+import romasku.moneylog.lib.defUpdate
 
-typealias SpendingsListStore = Store<SpendingsList.State, SpendingsList.Event, SpendingsList.Command>
+typealias SpendingsListStore = Store<State, Event, Command>
 
-object SpendingsList : StoreDefs<SpendingsList.State, SpendingsList.Event, SpendingsList.Command> {
+class State
 
-    class State
+sealed class Event
 
-    sealed class Event
+sealed class Command
 
-    sealed class Command
+val init = defInit { Pair(State(), null) }
 
-    override val init = defInit { Pair(State(), null) }
-
-    override val update = defUpdate {
-        state: State, event: Event ->
-        Pair(state, null)
-    }
-
-    override val doCommand = defDoCommand<Command> {}
+val update = defUpdate { state: State, event: Event ->
+    Pair(state, null)
 }
+
+val doCommand = defDoCommand<Command> {}
+
+fun makeSpendingsListStore(effector: Effector): SpendingsListStore = Store(
+    init,
+    update,
+    doCommand, effector
+)

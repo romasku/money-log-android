@@ -1,18 +1,17 @@
 package romasku.moneylog
 
-import java.math.BigDecimal
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import org.junit.Test
 import romasku.moneylog.entities.Spending
 import romasku.moneylog.lib.NavigateTo
-import romasku.moneylog.state.Route
-import romasku.moneylog.state.SpendingEditor.Command
-import romasku.moneylog.state.SpendingEditor.Event
-import romasku.moneylog.state.SpendingEditor.doCommand
-import romasku.moneylog.state.SpendingEditor.init
-import romasku.moneylog.state.SpendingEditor.update
-import romasku.moneylog.state.StoreSpending
+import romasku.moneylog.screens.Route
+import romasku.moneylog.screens.spendingEditor.Command
+import romasku.moneylog.screens.spendingEditor.Event
+import romasku.moneylog.screens.spendingEditor.doCommand
+import romasku.moneylog.screens.spendingEditor.init
+import romasku.moneylog.screens.spendingEditor.update
+import java.math.BigDecimal
 
 class SpendingEditorStoreTest {
     @Test

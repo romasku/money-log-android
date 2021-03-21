@@ -5,7 +5,9 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import romasku.moneylog.lib.ViewNavigator
-import romasku.moneylog.screens.*
+import romasku.moneylog.lib.makeUINavigator
+import romasku.moneylog.screens.Screen
+import romasku.moneylog.screens.viewSelector
 
 class MainActivity : AppCompatActivity() {
     lateinit var viewNavigator: ViewNavigator<Screen, View>
@@ -15,14 +17,12 @@ class MainActivity : AppCompatActivity() {
         val frame = FrameLayout(this)
         setContentView(frame)
 
-        viewNavigator = ViewNavigator(
-            MoneyLogApplication.navigator,
-            makeView = viewSelector(layoutInflater, frame),
-            attachView = {
-                frame.removeAllViews()
-                frame.addView(it)
-            }
-        )
+        viewNavigator =
+            MoneyLogApplication.navigator.makeUINavigator(viewSelector(layoutInflater, frame))
+        viewNavigator.subscribe {
+            frame.removeAllViews()
+            frame.addView(it)
+        }
     }
 
     override fun onBackPressed() {

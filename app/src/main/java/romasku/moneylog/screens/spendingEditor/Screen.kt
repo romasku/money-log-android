@@ -17,7 +17,7 @@ fun makeSpendingEditorView(
     view.apply {
         store.apply {
             linkString(
-                valueToEvent = { SpendingEditor.Event.NameEntered(it) },
+                valueToEvent = { Event.NameEntered(it) },
                 stateToValue = { it.name },
                 editText = spending_name_input
             )
@@ -26,12 +26,12 @@ fun makeSpendingEditorView(
             store.subscribe { spending_amount_layout.error = it.amountError }
 
             linkDecimal(
-                valueToEvent = { SpendingEditor.Event.AmountEntered(it) },
+                valueToEvent = { Event.AmountEntered(it) },
                 stateToValue = { it.amount },
                 editText = spending_amount_input
             )
         }
-        save_spending.setOnClickListener { store.dispatch(SpendingEditor.Event.SaveRequested) }
+        save_spending.setOnClickListener { store.dispatch(Event.SaveRequested) }
     }
     return view
 }
