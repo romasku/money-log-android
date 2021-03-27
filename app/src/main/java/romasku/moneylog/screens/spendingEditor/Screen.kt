@@ -9,25 +9,10 @@ import kotlinx.android.synthetic.main.spending_editor.view.*
 import romasku.moneylog.R
 import romasku.moneylog.lib.linkDecimal
 import romasku.moneylog.lib.linkString
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
+import romasku.moneylog.screens.dateToStr
+import romasku.moneylog.screens.millisecondUTCToLocalDate
+import romasku.moneylog.screens.toUTCEpochMillisecond
 
-fun dateToStr(date: LocalDate): String {
-    fun Int.pad() = this.toString().padStart(2, '0')
-    return "${date.dayOfMonth.pad()}/${date.monthValue.pad()}/${date.year}"
-}
-
-fun LocalDate.toUTCEpochMillisecond() =
-    atStartOfDay(ZoneId.of("UTC")).toInstant().toEpochMilli()
-
-fun millisecondUTCToLocalDate(millis: Long): LocalDate {
-    ZoneId.systemDefault()
-    val instant = Instant.ofEpochMilli(millis)
-    val datetime = LocalDateTime.ofInstant(instant, ZoneId.of("UTC"))
-    return datetime.toLocalDate()
-}
 
 fun makeSpendingEditorView(
     store: SpendingEditorStore,

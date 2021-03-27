@@ -21,6 +21,7 @@ fun makeSpendingsListView(
         }
         spendings_list.setHasFixedSize(true)
         add_new_spending_fab.setOnClickListener { store.dispatch(Event.AddNewSpendingRequested) }
+        go_to_statistics.setOnClickListener { store.dispatch(Event.StatisticsRequested) }
     }
     return view
 }
