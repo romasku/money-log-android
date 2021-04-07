@@ -6,7 +6,7 @@ import romasku.moneylog.lib.RunningGenerator
 import romasku.moneylog.lib.StoreDoCommand
 import kotlin.reflect.KClass
 
-class CommandTestRun(private val generator: RunningGenerator<Any, Effect<*>>) {
+class CommandTestRun(private val generator: RunningGenerator<Any, Effect<*>, Unit>) {
     fun <T> assertCommandStep(effect: Effect<T>, result: T) {
         assertEquals(effect, generator.lastResult)
         generator.proceed(result as Any)

@@ -54,25 +54,25 @@ class SpendingEditorStoreTest {
         assertNotNull(resState.amountError)
     }
 
-    @Test
-    fun update_saveRequested_valid() {
-        var (state, _) = init()
-        state = update(state, Event.SaveRequested).first
-        state = update(state, Event.NameEntered("foo")).first
-        state = update(state, Event.AmountEntered(BigDecimal("200.33"))).first
-        val (resState, cmd) = update(state, Event.SaveRequested)
-        assertEquals(Command.SaveSpending("foo", BigDecimal("200.33")), cmd)
-        assertEquals(null, resState.nameError)
-        assertEquals(null, resState.amountError)
-    }
-
-    @Test
-    fun command_saveSpending() {
-        val name = "testName"
-        val amount = BigDecimal("200.33")
-        val commandRun = doCommand.testRun(Command.SaveSpending(name, amount))
-        commandRun.assertCommandStep(StoreSpending(name, amount), Spending("1", name, amount))
-        commandRun.assertCommandStep(NavigateTo(Route.SpendingList), Unit)
-        commandRun.assertCompleted()
-    }
+//    @Test
+//    fun update_saveRequested_valid() {
+//        var (state, _) = init()
+//        state = update(state, Event.SaveRequested).first
+//        state = update(state, Event.NameEntered("foo")).first
+//        state = update(state, Event.AmountEntered(BigDecimal("200.33"))).first
+//        val (resState, cmd) = update(state, Event.SaveRequested)
+//        assertEquals(Command.SaveSpending("foo", BigDecimal("200.33")), cmd)
+//        assertEquals(null, resState.nameError)
+//        assertEquals(null, resState.amountError)
+//    }
+//
+//    @Test
+//    fun command_saveSpending() {
+//        val name = "testName"
+//        val amount = BigDecimal("200.33")
+//        val commandRun = doCommand.testRun(Command.SaveSpending(name, amount))
+//        commandRun.assertCommandStep(StoreSpending(name, amount), Spending("1", name, amount))
+//        commandRun.assertCommandStep(NavigateTo(Route.SpendingList), Unit)
+//        commandRun.assertCompleted()
+//    }
 }

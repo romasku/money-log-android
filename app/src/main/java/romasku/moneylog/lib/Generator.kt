@@ -8,26 +8,29 @@ import kotlin.coroutines.intrinsics.COROUTINE_SUSPENDED
 import kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn
 import kotlin.coroutines.resume
 
-typealias Generator<P, R> = suspend GeneratorContext<P, R>.() -> Unit
+typealias Generator<P, O, R> = suspend GeneratorContext<P, O>.() -> R
 
 interface GeneratorContext<P, R> {
     suspend fun yield(value: R): P
 }
 
-interface RunningGenerator<in P, out R> {
-    val lastResult: R?
-    fun proceed(value: P): R?
+interface RunningGenerator<in P, out O, out R> {
+    val lastResult: O?
+    val exitValue: R?
+    fun proceed(value: P): O?
 }
 
 class GeneratorFinished : Throwable()
 
-fun <P, R> startGenerator(block: Generator<P, R>): RunningGenerator<P, R> = GeneratorRunner(block)
+fun <P, O, R> startGenerator(block: Generator<P, O, R>): RunningGenerator<P, O, R> = GeneratorRunner(block)
 
-internal class GeneratorRunner<P, R>(block: Generator<P, R>) :
-    GeneratorContext<P, R>,
-    RunningGenerator<P, R>,
-    Continuation<Unit> {
-    override var lastResult: R? = null
+internal class GeneratorRunner<P, O, R>(block: Generator<P, O, R>) :
+    GeneratorContext<P, O>,
+    RunningGenerator<P, O, R>,
+    Continuation<R> {
+    override var lastResult: O? = null
+        private set
+    override var exitValue: R? = null
         private set
     private var continuation: Continuation<P>? = null
     private var exception: Throwable? = null
@@ -37,13 +40,13 @@ internal class GeneratorRunner<P, R>(block: Generator<P, R>) :
         exception?.let { throw it }
     }
 
-    override suspend fun yield(value: R): P = suspendCoroutineUninterceptedOrReturn {
+    override suspend fun yield(value: O): P = suspendCoroutineUninterceptedOrReturn {
         lastResult = value
         continuation = it
         COROUTINE_SUSPENDED
     }
 
-    override fun proceed(value: P): R? {
+    override fun proceed(value: P): O? {
         continuation?.resume(value) ?: run {
             throw GeneratorFinished()
         }
@@ -52,10 +55,13 @@ internal class GeneratorRunner<P, R>(block: Generator<P, R>) :
     }
 
     override val context: CoroutineContext get() = EmptyCoroutineContext
-    override fun resumeWith(result: Result<Unit>) {
+    override fun resumeWith(result: Result<R>) {
         continuation = null
         result
-            .onSuccess { lastResult = null }
+            .onSuccess {
+                lastResult = null
+                exitValue = it
+            }
             .onFailure { exception = it }
     }
 }

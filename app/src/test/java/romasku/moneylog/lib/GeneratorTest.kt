@@ -8,7 +8,7 @@ class GeneratorTest {
 
     @Test
     fun `test simple generator`() {
-        val runningGenerator = startGenerator<Unit, Int> {
+        val runningGenerator = startGenerator<Unit, Int, Unit> {
             for (x in 1..10) {
                 yield(x)
             }
@@ -22,7 +22,7 @@ class GeneratorTest {
 
     @Test
     fun `test passing data to generator`() {
-        val runningGenerator = startGenerator<Int, Int> {
+        val runningGenerator = startGenerator<Int, Int, Unit> {
             var y = 0
             while (y != 42) {
                 y = yield(y)
@@ -40,7 +40,7 @@ class GeneratorTest {
     @Test
     fun `test failing at start generator`() {
         val throwable = expectError(Throwable::class) {
-            startGenerator<Int, Int> {
+            startGenerator<Int, Int, Unit> {
                 throw Throwable("test")
             }
         }
@@ -49,7 +49,7 @@ class GeneratorTest {
 
     @Test
     fun `test failing at value generator`() {
-        val runningGenerator = startGenerator<Int, Int> {
+        val runningGenerator = startGenerator<Int, Int, Unit> {
             var y = 0
             while (y != 42) {
                 y = yield(y)
@@ -65,7 +65,7 @@ class GeneratorTest {
 
     @Test
     fun `proceed after finish validated`() {
-        val runningGenerator = startGenerator<Int, Int> {}
+        val runningGenerator = startGenerator<Int, Int, Unit> {}
         assertEquals(null, runningGenerator.lastResult)
         expectError(GeneratorFinished::class) {
             runningGenerator.proceed(42)

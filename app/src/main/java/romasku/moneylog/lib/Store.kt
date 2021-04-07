@@ -53,7 +53,7 @@ interface CommandCtx {
 
 typealias StoreInit<S, C> = () -> Pair<S, C?>
 typealias StoreUpdate<S, C, M> = (S, M) -> Pair<S, C?>
-typealias StoreDoCommand<C> = (C) -> Generator<*, Effect<*>>
+typealias StoreDoCommand<C> = (C) -> Generator<*, Effect<*>, Unit>
 
 fun <S, C> defInit(init: () -> Pair<S, C?>): StoreInit<S, C> = init
 fun <S, C, M> defUpdate(update: (S, M) -> Pair<S, C?>): StoreUpdate<S, C, M> = update
@@ -121,7 +121,7 @@ class Store<S, M, C>(
         if (cmd == null) {
             return
         }
-        val generator = startGenerator<Any, Effect<*>>(doCommand(cmd))
+        val generator = startGenerator<Any, Effect<*>, Unit>(doCommand(cmd))
         lateinit var proceed: ((Any) -> Unit)
         val runNext = {
             generator.lastResult?.also { effect ->
